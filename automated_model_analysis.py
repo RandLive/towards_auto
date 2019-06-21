@@ -4,6 +4,10 @@ Ver: 00.00.01 Very basic funcitons
 Ver: 00.00.02 Change stacking method for fast experiment
 Ver: 00.00.03 add read_csv
 
+
+
+-----------------------------------
+TODO: 1. selectable metric as metric 3 (custom)
 @author: ML
 """
 
@@ -89,9 +93,9 @@ from sklearn.model_selection import KFold
 kf = KFold(n_splits=5, random_state=2019, shuffle=True)
 
 pipeline = make_pipeline(
-#                         scalers['robusts'], 
-                         scalers['standards'],
-#                         feature_selection['variance_threshold'],
+                         scalers['robusts'], 
+#                         scalers['standards'],
+                         feature_selection['variance_threshold'],
                          )
 #X = pipeline.fit_transform(X)
 
@@ -188,4 +192,4 @@ except:
     pass
 
 sub['target'] = preds
-sub.to_csv('submission_{}.csv'.format(mse_score_s), index=False)
+#sub.to_csv('submission_{}.csv'.format(mse_score_s), index=False)
