@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on %(date)s
+Ver: 00.00.01 Very basic funcitons
 
-@author: %(ML)s
+@author: ML
 """
 
 # import warnings filter
@@ -126,7 +126,6 @@ for idx, model in enumerate(models.items()):
         print('-------------------------------------------')
         
     
-
 # In[showing result]       
 print('\nvalid score: \n', valid_score, '\n')
 
@@ -173,4 +172,4 @@ try:
 except:
     pass
 
-print(pd.DataFrame(valid_score))
+print('\n', pd.DataFrame(valid_score).transpose())
