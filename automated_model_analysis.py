@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Ver: 00.00.01 Very basic funcitons
+Ver: 00.00.02 Change stacking method for fast experiment
 
 @author: ML
 """
@@ -33,21 +34,23 @@ from sklearn import neural_network
 from sklearn import svm
 from sklearn import ensemble
 from sklearn import neighbors
+from sklearn import naive_bayes
 
 import lightgbm as lgb
 
 models = {
         'ridge  ': linear_model.Ridge(alpha=.5,max_iter=1e8),
-        'ridgeCV': linear_model.RidgeCV(cv=5),
+        'ridgeCV': linear_model.RidgeCV(cv=3),
         'lasso  ': linear_model.Lasso(alpha=1e-6, max_iter=1e8),
         'lr     ': linear_model.LogisticRegression(solver='lbfgs', max_iter=1e4),
         'lrCV   ': linear_model.LogisticRegressionCV(solver='lbfgs', max_iter=1e4, cv=5),
         'mlp_clf': neural_network.MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(256, 64), random_state=1),
         'svc    ': svm.SVC(),
         'rf     ': ensemble.RandomForestRegressor(max_depth=6),
-        'lgbclf ': lgb.LGBMClassifier(gamma='scale', num_leaves=31,learning_rate=0.001, n_estimators=2000),
-        'lgbreg ': lgb.LGBMRegressor(gamma='scale', num_leaves=31,learning_rate=0.001, n_estimators=2000),
+        'lgbclf ': lgb.LGBMClassifier(gamma='auto', num_leaves=31,learning_rate=0.001, n_estimators=2000),
+        'lgbreg ': lgb.LGBMRegressor(gamma='auto', num_leaves=31,learning_rate=0.001, n_estimators=2000),
         'knn    ': neighbors.KNeighborsClassifier(n_neighbors=5, n_jobs=15),
+        'nb     ': naive_bayes.GaussianNB(),
           }
 
 print('\nall models: ', list(models.keys()))
@@ -127,7 +130,7 @@ for idx, model in enumerate(models.items()):
         
     
 # In[showing result]       
-print('\nvalid score: \n', valid_score, '\n')
+print('\nvalid score: \n', pd.DataFrame(valid_score).transpose())
 
 inds = np.argmax(mse_score) 
 print('\nmse score - worst model found: ',  list(models.keys())[inds], np.max(mse_score))
@@ -140,26 +143,19 @@ inds = np.argmax(auc_score)
 print('auc score - best model found: ',  list(models.keys())[inds], np.max(auc_score))
 
 # In[Stacking]
+
 X_s = np.asarray(X_s)
-for train_index, test_index in kf.split(X):
+for train_index, test_index in kf.split(X_s):
 
     X_train, X_test = X_s[train_index], X_s[test_index]
     y_train, y_test = y[train_index], y[test_index]            
     
     try:
-        model = models['lgbclf ']
-        model.fit(X_train, y_train,
-                eval_set=[(X_test, y_test)],
-                eval_metric='auc',
-                early_stopping_rounds=500,
-                verbose=0)
+        model = models['lrCV   ']
+        model.fit(X_train, y_train)
     except:
-        model = models['lgbreg ']
-        model.fit(X_train, y_train,
-                eval_set=[(X_test, y_test)],
-                eval_metric='l1',
-                early_stopping_rounds=500,
-                verbose=0)        
+        model = models['ridgeCV']
+        model.fit(X_train, y_train)    
         
     oof[test_index] = model.predict(X_test)
 
@@ -171,5 +167,3 @@ try:
     print('auc score - stacking: ', auc_score_s)
 except:
     pass
-
-print('\n', pd.DataFrame(valid_score).transpose())
