@@ -2,6 +2,7 @@
 """
 Ver: 00.00.01 Very basic funcitons
 Ver: 00.00.02 Change stacking method for fast experiment
+Ver: 00.00.03 add read_csv
 
 @author: ML
 """
@@ -18,14 +19,25 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import mean_squared_error
 
 # In[laoding dataset]
-from sklearn.datasets import load_breast_cancer
-data = load_breast_cancer()
-y = np.asarray(data.target)
-X = np.asarray(data.data)
+#from sklearn.datasets import load_breast_cancer
+#data = load_breast_cancer()
+#y = np.asarray(data.target)
+#X = np.asarray(data.data)
 
 # always make to this format, maybe larger data
-X = X[:500]
-y = y[:500]
+tmp = pd.read_csv('train.csv')
+y = tmp.target.values
+tmp.drop(['id', 'target'], axis=1, inplace=True)
+X = np.asarray(tmp)
+
+sub = pd.read_csv('sample_submission.csv')
+tmp = pd.read_csv('test.csv')
+tmp.drop('id', axis=1, inplace=True)
+X_pred = np.asarray(tmp)
+
+
+#X = X[:500]
+#y = y[:500]
 
 
 # In[algorithms]
@@ -77,11 +89,11 @@ from sklearn.model_selection import KFold
 kf = KFold(n_splits=5, random_state=2019, shuffle=True)
 
 pipeline = make_pipeline(
-                         scalers['robusts'], 
-#                         scalers['standards'],
-                         feature_selection['variance_threshold'],
+#                         scalers['robusts'], 
+                         scalers['standards'],
+#                         feature_selection['variance_threshold'],
                          )
-X = pipeline.fit_transform(X)
+#X = pipeline.fit_transform(X)
 
 mse_score = []
 auc_score = []
@@ -89,6 +101,7 @@ valid_score = {}
 oof=y*0
 idx2 = 0
 X_s = pd.DataFrame() 
+X_s_preds = pd.DataFrame()
 
 for idx, model in enumerate(models.items()):
     print(idx)
@@ -119,6 +132,7 @@ for idx, model in enumerate(models.items()):
             auc_score.append(0)     
             
         X_s[list(models.keys())[idx]] = oof
+        X_s_preds[list(models.keys())[idx]] = model.predict(X_pred)
             
         valid_score.update({list(models.keys())[idx]: ['mse: ', "{0:.4f}".format(mse_score[idx2]), 'auc: ', "{0:.4f}".format(auc_score[idx2])]})
         
@@ -145,6 +159,8 @@ print('auc score - best model found: ',  list(models.keys())[inds], np.max(auc_s
 # In[Stacking]
 
 X_s = np.asarray(X_s)
+X_s_preds = np.asarray(X_s_preds)
+preds = np.asarray(sub.target * 0.)
 for train_index, test_index in kf.split(X_s):
 
     X_train, X_test = X_s[train_index], X_s[test_index]
@@ -158,6 +174,9 @@ for train_index, test_index in kf.split(X_s):
         model.fit(X_train, y_train)    
         
     oof[test_index] = model.predict(X_test)
+    preds += model.predict(X_s_preds)
+
+preds/=5
 
 # In[showing result]        
 mse_score_s = mean_squared_error(y, oof)
@@ -167,3 +186,6 @@ try:
     print('auc score - stacking: ', auc_score_s)
 except:
     pass
+
+sub['target'] = preds
+sub.to_csv('submission_{}.csv'.format(mse_score_s), index=False)
