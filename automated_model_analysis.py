@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on %(date)s
+
+@author: %(ML)s
+"""
+
 # import warnings filter
 from warnings import simplefilter
 # ignore all future warnings
