@@ -8,6 +8,7 @@ Ver: 00.00.03 add read_csv
 
 -----------------------------------
 TODO: 1. selectable metric as metric 3 (custom)
+TODO: 2. using Keras NN to stack the models
 @author: ML
 """
 
@@ -62,9 +63,9 @@ models = {
         'lrCV   ': linear_model.LogisticRegressionCV(solver='lbfgs', max_iter=1e4, cv=5),
         'mlp_clf': neural_network.MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(256, 64), random_state=1),
         'svc    ': svm.SVC(),
-        'rf     ': ensemble.RandomForestRegressor(max_depth=6),
-        'lgbclf ': lgb.LGBMClassifier(gamma='auto', num_leaves=31,learning_rate=0.001, n_estimators=2000),
-        'lgbreg ': lgb.LGBMRegressor(gamma='auto', num_leaves=31,learning_rate=0.001, n_estimators=2000),
+        'rf     ': ensemble.RandomForestRegressor(max_depth=4),
+        'lgbclf ': lgb.LGBMClassifier(gamma='auto', num_leaves=4,learning_rate=0.001, n_estimators=2000),
+        'lgbreg ': lgb.LGBMRegressor(gamma='auto', num_leaves=4,learning_rate=0.001, n_estimators=2000),
         'knn    ': neighbors.KNeighborsClassifier(n_neighbors=5, n_jobs=15),
         'nb     ': naive_bayes.GaussianNB(),
           }
@@ -75,29 +76,29 @@ print('\nall models: ', list(models.keys()))
 from sklearn import preprocessing
 from sklearn import feature_selection
 
-scalers = {
+preprocessings = {
         'standards':preprocessing.StandardScaler(),
         'minmaxs':preprocessing.MinMaxScaler(),
-        'robusts':preprocessing.RobustScaler()
-          }
+        'robusts':preprocessing.RobustScaler(),
+              }
 
 feature_selection = {
         'variance_threshold':feature_selection.VarianceThreshold(threshold=1e-4),        
         }
 
-print('all scalers: ', list(scalers.keys()), '\n')
+print('all preprocessings: ', list(preprocessings.keys()), '\n')
 
 # In[Preprocessing Pipline]
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import KFold
 kf = KFold(n_splits=5, random_state=2019, shuffle=True)
 
-pipeline = make_pipeline(
-                         scalers['robusts'], 
-#                         scalers['standards'],
+pipeline_preprocessing = make_pipeline(
+                         preprocessings['robusts'],
+#                         preprocessings['standards'],
                          feature_selection['variance_threshold'],
                          )
-#X = pipeline.fit_transform(X)
+X = pipeline_preprocessing.fit_transform(X)
 
 mse_score = []
 auc_score = []
