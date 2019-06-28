@@ -17,7 +17,11 @@ Ver: 01.02.02 Autoencoder
 TODO: 0. Add xgboost sklearn 
 TODO: 1. selectable metric as metric 3 (custom)
 TODO: 2. using Keras NN to stack the models
+<<<<<<< HEAD
 @author: meli
+=======
+@author: ML
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
 """
 
 import pandas as pd
@@ -30,11 +34,16 @@ from keras.layers import Dense, Activation, Dropout, Reshape, Flatten, Input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from keras.models import Model
 
+<<<<<<< HEAD
+=======
+import numpy as np
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
 from sklearn import preprocessing
 from sklearn import feature_selection
 from sklearn.decomposition import PCA
 from sklearn.pipeline import make_pipeline
 
+<<<<<<< HEAD
 from keras_nn_models import NN_Models
 
 def auto_model(X, y, X_pred, sub, nfolds=5):
@@ -43,6 +52,9 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
     X_pred is the feautures in prediction dataset
     sub is the initialized final prediction in dataframe form 
     '''
+=======
+def auto_model(X, y, X_pred, sub, nfolds=5):
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
     
     # import warnings filter
     from warnings import simplefilter
@@ -71,10 +83,17 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
             pipe_preprocessing = make_pipeline(
             #                        preprocessings['variance_threshold'],
                                      preprocessings['standards'],
+<<<<<<< HEAD
                                      preprocessings['robusts'],
                                      preprocessings['PCA'],
                                      preprocessings['PowerTransformer'],
                                      preprocessings['minmaxs'],
+=======
+    #                                 preprocessings['minmaxs'],
+                                     preprocessings['robusts'],
+    #                                 preprocessings['PCA'],
+                                     preprocessings['PowerTransformer'],                               
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
                                     )
         elif mode == 'min_max_scale':
             pipe_preprocessing = make_pipeline(
@@ -103,7 +122,11 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
     
     import lightgbm as lgb
     
+<<<<<<< HEAD
     from sklearn.model_selection import KFold 
+=======
+    from sklearn.model_selection import KFold    
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
     kf = KFold(n_splits=nfolds, random_state=2019, shuffle=True)
 
     def auto_encoding(X):
@@ -123,9 +146,15 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
 
     models = {
             'ridge  ': linear_model.Ridge(alpha=0.1, normalize= False),
+<<<<<<< HEAD
             'lasso  ': linear_model.Lasso(alpha=1e-6, max_iter=1e8),
             'lr     ': linear_model.LogisticRegression(solver='lbfgs',warm_start=True, max_iter=1e4),
             'lrCV   ': linear_model.LogisticRegressionCV(solver='lbfgs', max_iter=1e4, cv=5),
+=======
+#            'lasso  ': linear_model.Lasso(alpha=1e-6, max_iter=1e8),
+            'lr     ': linear_model.LogisticRegression(solver='lbfgs',warm_start=True, max_iter=1e4),
+#            'lrCV   ': linear_model.LogisticRegressionCV(solver='lbfgs', max_iter=1e4, cv=5),
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
             'mlp_clf': neural_network.MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(256, 64), random_state=1),
             'mlp_reg': neural_network.MLPRegressor(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(256, 64, 32, 32, 32), random_state=1),
             'svc    ': svm.SVC(C= 10, kernel='rbf'),
@@ -136,9 +165,14 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
             'knn    ': neighbors.KNeighborsClassifier(n_neighbors=30, n_jobs=15),
             'nb     ': naive_bayes.GaussianNB(),
             'dt     ': tree.DecisionTreeClassifier(),
+<<<<<<< HEAD
             'Esnet  ': linear_model.ElasticNet(),
 #            'catreg ': CatBoostRegressor(iterations=1000, learning_rate=0.1, depth=3, verbose = 100),
 #            'catclf ': CatBoostClassifier(iterations=1000, learning_rate=0.1, depth=2, verbose = 100),
+=======
+            'catreg ': CatBoostRegressor(iterations=1000, learning_rate=0.1, depth=3, verbose = 100),
+            'catclf ': CatBoostClassifier(iterations=1000, learning_rate=0.1, depth=2, verbose = 100),
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
             }
     
     print('\nall models: ', list(models.keys()))
@@ -147,6 +181,10 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
     
     # In[Auto_encoding]
     
+<<<<<<< HEAD
+=======
+    #
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
     mse_score = []
     auc_score = []
     valid_score = {}
@@ -198,10 +236,17 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
             
     # In[Keras NN]
 
+<<<<<<< HEAD
 #    full = np.concatenate((X, X_pred), axis=0)
 #    full = auto_encoding(full)
 #    X = full[:len(X)]
 #    X_pred = full[len(X):]    
+=======
+    full = np.concatenate((X, X_pred), axis=0)
+    full = auto_encoding(full)
+    X = full[:len(X)]
+    X_pred = full[len(X):]    
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
     
     X_s0 = np.asarray(X)
     X_s0_preds = np.asarray(X_pred)
@@ -215,11 +260,29 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
     print('\nstart kerasNN ... ')
     
     for fold_, (train_index, test_index) in enumerate(kf.split(X)):
+<<<<<<< HEAD
                 
         input_shape = X.shape[1]
         output_shape = 1
         models = NN_Models(input_shape, output_shape)
         model = models.multinets()
+=======
+        
+        model = Sequential([
+                Reshape((X.shape[1], 1, 1,), input_shape=(X.shape[1],)),
+                Dense(512),
+                Activation('relu'),
+                Dense(128),
+                Activation('relu'),
+                Dense(64),
+                Activation('relu'),
+                Dense(64),
+                Activation('relu'),
+                Flatten(),
+                Dense(1),
+                Activation('sigmoid'),
+                ])
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
         
         model.compile(optimizer='adam',
                           loss='binary_crossentropy')
@@ -259,17 +322,41 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
     oof = np.zeros(len(X_s))
     predictions = np.asarray(sub.target * 0.)
     
+<<<<<<< HEAD
     X, X_pred = pre_process(X_s, X_s_preds, 'full')
+=======
+    X, X_pred = pre_process(X_s, X_s_preds, 'min_max_scale')
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
     #
     print('\nstart stacking... ')
     
     for fold_, (train_index, test_index) in enumerate(kf.split(X)):
+<<<<<<< HEAD
                 
         input_shape = X.shape[1]
         output_shape = 1
         models = NN_Models(input_shape, output_shape)
         model = models.mlp()
             
+=======
+        
+        model = Sequential([
+                Reshape((X.shape[1], 1, 1, ), input_shape=(X.shape[1],)),
+                Dropout(0.2),
+                Dense(512),
+                Activation('relu'),
+                Dense(64),
+                Activation('linear'),
+                Dense(64),
+                Activation('relu'),
+                Dense(64),
+                Activation('linear'),
+                Flatten(),
+                Dense(1),
+                Activation('sigmoid'),
+                ])
+        
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
         model.compile(optimizer='adam',
                           loss='binary_crossentropy')
         
@@ -335,7 +422,17 @@ def auto_model(X, y, X_pred, sub, nfolds=5):
     return
 
 '''
+<<<<<<< HEAD
 with auto encoding
 auc score - keras_nn:  0.9895090111516305
 auc score - stacking:  0.9941599281221922
+=======
+auc score - keras_nn:  0.9927461550657999
+auc score - stacking:  0.9931293272025792
+
+
+with auto encoding
+auc score - keras_nn:  0.9588354209608372
+auc score - stacking:  0.9931425400348819
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
 '''

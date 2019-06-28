@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Jun 27 15:11:00 2019
+<<<<<<< HEAD
 @author: meli
+=======
+
+@author: m02li
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
 """
 
 from __future__ import absolute_import

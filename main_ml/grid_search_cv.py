@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jun 26 10:02:26 2019
+<<<<<<< HEAD
+=======
+
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
 @author: meli
 """
 

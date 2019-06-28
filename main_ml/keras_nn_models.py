@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Jun 27 09:29:22 2019
+<<<<<<< HEAD
 @author: meli
+=======
+
+@author: m02li
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
 """
 
 # Generate dummy data
 import numpy as np
 import keras
+<<<<<<< HEAD
 import pandas as pd
 
 from sklearn.preprocessing import MinMaxScaler
@@ -42,6 +48,24 @@ y_train = np.array(y)
 # In[Keras model classes]
 from keras.models import Sequential
 from keras.layers import Concatenate, Embedding, Lambda, Input, Dense, Dropout, Activation, Conv1D, Conv2D, LSTM, GRU, MaxPooling2D, Reshape, Flatten, Layer, AveragePooling2D
+=======
+X_train = np.random.random((1000, 20))
+y_train = keras.utils.to_categorical(np.random.randint(2, size=(1000, 1)), num_classes=10)
+X_test = np.random.random((100, 20))
+y_test = keras.utils.to_categorical(np.random.randint(2, size=(100, 1)), num_classes=10)
+
+y=y_train
+X=X_train
+
+X_pred = np.array(X_train)
+
+input_shape = X.shape[1]
+output_shape = y.shape[1]
+
+# In[Keras model classes]
+from keras.models import Sequential
+from keras.layers import Embedding, Lambda, Input, Dense, Dropout, Activation, Conv1D, Conv2D, LSTM, GRU, MaxPooling2D, Reshape, Flatten, Layer, AveragePooling2D
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
 from keras import activations
 from keras.models import Model
 from keras.optimizers import SGD
@@ -82,6 +106,7 @@ class NN_Models(object):
         model = Model(input_arg, output_arg)         
         return model
 
+<<<<<<< HEAD
     def multinets(self):
         input_arg = Input(shape=(self.input_shape,))
         x1 = Dense(256, activation='relu')(input_arg)
@@ -104,6 +129,8 @@ class NN_Models(object):
         model = Model(input_arg, output_arg)         
         return model
 
+=======
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
     def conv1d(self):
         input_arg = Input(shape=(self.input_shape,))
         x = Reshape((self.input_shape, 1))(input_arg)
@@ -155,7 +182,11 @@ class NN_Models(object):
         x = Conv2D(self.input_shape, (1, 1), activation='relu')(x)
         x = Conv2D(self.input_shape, (1, 1), activation='relu')(x)      
         x = Reshape((-1, self.input_shape))(input_arg)
+<<<<<<< HEAD
         capsule = Capsule(self.output_shape, 16, 3, True)(x)
+=======
+        capsule = Capsule(10, 16, 3, True)(x)
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
         output_arg = Lambda(lambda z: K.sqrt(K.sum(K.square(z), 2)))(capsule)
         model = Model(input_arg, output_arg)
         return model
@@ -163,7 +194,11 @@ class NN_Models(object):
     def capsule(self):
         input_arg = Input(shape=(self.input_shape,))    
         x = Reshape((-1, self.input_shape))(input_arg)
+<<<<<<< HEAD
         capsule = Capsule(self.output_shape, 16, 3, True)(x)
+=======
+        capsule = Capsule(10, 16, 3, True)(x)
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
         output_arg = Lambda(lambda z: K.sqrt(K.sum(K.square(z), 2)))(capsule)
         model = Model(input_arg, output_arg)
         return model
@@ -181,6 +216,7 @@ class NN_Models(object):
         model = Model(input_arg, output_arg)          
         return model  
 
+<<<<<<< HEAD
 #Loss = 'mean_squared_error'
 ##Loss = 'mean_absolute_error'
 ##Loss = 'categorical_crossentropy'
@@ -201,3 +237,28 @@ class NN_Models(object):
 #
 #model.load_weights("NN_ml.hdf5")
 #predictions = model.predict(X_pred)
+=======
+Loss = 'mean_squared_error'
+#Loss = 'mean_absolute_error'
+#Loss = 'categorical_crossentropy'
+#Loss = 'binary_crossentropy'
+
+models = NN_Models(input_shape, output_shape)
+model = models.attention_lstm()
+model.compile(optimizer='adam', loss=Loss, metrics=['accuracy'])   
+
+model.fit(X_train, y_train, 
+          epochs = 750,
+          batch_size = 512, 
+          callbacks = models.callback(),
+          shuffle = True,
+#          validation_data=(X_test, y_test),
+          validation_split=(0.8),
+          verbose=1)
+
+model.load_weights("NN_ml.hdf5")
+predictions = model.predict(X_pred)
+
+score = model.evaluate(X_test, y_test, batch_size=128)
+print(score)
+>>>>>>> bb38b4fdedf3f7cc3dab38fea065353aeef512fa
